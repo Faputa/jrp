@@ -11,9 +11,9 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=jrp/common"/>
-        <javaElement handleIdentifier="=jrp/client&lt;jrp.client.connect"/>
-        <javaElement handleIdentifier="=jrp/client&lt;jrp.client.model"/>
-        <javaElement handleIdentifier="=jrp/client&lt;jrp.client"/>
+        <javaElement handleIdentifier="=jrp/jrp-common"/>
+        <javaElement handleIdentifier="=jrp/jrp-client&lt;jrp.client.connect"/>
+        <javaElement handleIdentifier="=jrp/jrp-client&lt;jrp.client.model"/>
+        <javaElement handleIdentifier="=jrp/jrp-client&lt;jrp.client"/>
     </selectedElements>
 </jardesc>

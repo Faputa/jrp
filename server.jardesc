@@ -11,10 +11,10 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=jrp/common"/>
-        <javaElement handleIdentifier="=jrp/server&lt;jrp.server.model"/>
-        <javaElement handleIdentifier="=jrp/server&lt;jrp.server.server"/>
-        <javaElement handleIdentifier="=jrp/server&lt;jrp.server.listener"/>
-        <javaElement handleIdentifier="=jrp/server&lt;jrp.server"/>
+        <javaElement handleIdentifier="=jrp/jrp-common"/>
+        <javaElement handleIdentifier="=jrp/jrp-server&lt;jrp.server.model"/>
+        <javaElement handleIdentifier="=jrp/jrp-server&lt;jrp.server.server"/>
+        <javaElement handleIdentifier="=jrp/jrp-server&lt;jrp.server.listener"/>
+        <javaElement handleIdentifier="=jrp/jrp-server&lt;jrp.server"/>
     </selectedElements>
 </jardesc>
