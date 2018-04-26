@@ -61,19 +61,19 @@ public class ControlConnect implements Runnable
 				}
 				else if("NewTunnel".equals(protocol.Type))
 				{
-					if(protocol.Payload.Error == null || "".equals(protocol.Payload.Error))
+					if(protocol.Error == null || "".equals(protocol.Error))
 					{
-						log.log("管道注册成功：%s:%d", context.getServerHost(), protocol.Payload.RemotePort);
+						log.log("管道注册成功：%s:%d", context.getServerHost(), protocol.RemotePort);
 					}
 					else
 					{
-						log.err("管道注册失败：" + protocol.Payload.Error);
+						log.err("管道注册失败：" + protocol.Error);
 						try{Thread.sleep(30);}catch(InterruptedException e){}
 					}
 				}
 				else if("AuthResp".equals(protocol.Type))
 				{
-					clientId = protocol.Payload.ClientId;
+					clientId = protocol.ClientId;
 					SocketHelper.sendpack(socket, Message.Ping());
 					for(Tunnel tunnel : context.getTunnelList())
 					{

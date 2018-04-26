@@ -55,7 +55,7 @@ public class ClientServer implements Runnable
 				}
 				else if("RegProxy".equals(protocol.Type))
 				{
-					String _clientId = protocol.Payload.ClientId;
+					String _clientId = protocol.ClientId;
 					OuterLink link  = context.pollOuterLink(_clientId);
 					if(link == null)
 					{
@@ -74,7 +74,7 @@ public class ClientServer implements Runnable
 				}
 				else if("ReqTunnel".equals(protocol.Type))
 				{
-					int remotePort = protocol.Payload.RemotePort;
+					int remotePort = protocol.RemotePort;
 					if(context.getTunnelInfo(remotePort) != null)
 					{
 						String error = "The tunnel " + remotePort + " is already registered.";

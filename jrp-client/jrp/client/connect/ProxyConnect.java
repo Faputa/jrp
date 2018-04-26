@@ -47,10 +47,10 @@ public class ProxyConnect implements Runnable
 				Protocol protocol = GsonUtil.toBean(msg, Protocol.class);
 				if("StartProxy".equals(protocol.Type))
 				{
-					Tunnel tunnel = getTunnelByUrl(protocol.Payload.RemotePort);
+					Tunnel tunnel = getTunnelByUrl(protocol.RemotePort);
 					if(tunnel == null)
 					{
-						String html = "没有找到对应的管道：" + context.getServerHost() + ":" + protocol.Payload.RemotePort;
+						String html = "没有找到对应的管道：" + context.getServerHost() + ":" + protocol.RemotePort;
 						log.err(html);
 						String header = "HTTP/1.0 404 Not Found\r\n";
 						header += "Content-Length: " + html.getBytes().length + "\r\n\r\n";
@@ -77,7 +77,7 @@ public class ProxyConnect implements Runnable
 					{
 						log.err("本地连接建立失败：[host]=%s [port]=%s", tunnel.getLocalHost(), tunnel.getLocalPort());
 						String html = "<html><body style=\"background-color: #97a8b9\"><div style=\"margin:auto; width:400px;padding: 20px 60px; background-color: #D3D3D3; border: 5px solid maroon;\"><h2>Tunnel ";
-						html += context.getServerHost() + ":" + protocol.Payload.RemotePort;
+						html += context.getServerHost() + ":" + protocol.RemotePort;
 						html += " unavailable</h2><p>Unable to initiate connection to <strong>";
 						html += tunnel.getLocalHost() + ":" + String.valueOf(tunnel.getLocalPort());
 						html += "</strong>. This port is not yet available for web server.</p>";
