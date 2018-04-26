@@ -1,0 +1,13 @@
+{
+	"tunnelList":[
+		{
+			"remotePort":12345,
+			"localHost":"127.0.0.1",
+			"localPort":8080
+		}
+	],
+	"serverHost":"lelepark.com",
+	"serverPort":4443,
+	"enableLog":true,
+	"pingTime":60000
+}

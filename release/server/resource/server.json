@@ -1,0 +1,6 @@
+{
+	"sslKeyStore":"resource/server_ks.jks",
+	"sslKeyStorePassword":"123456",
+	"port":4443,
+	"enableLog":true
+}

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jardesc>
+    <jar path="D:/server.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/jrp/server.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="false" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="false" manifestLocation="/jrp/server_MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=jrp/common"/>
+        <javaElement handleIdentifier="=jrp/server&lt;jrp.server.model"/>
+        <javaElement handleIdentifier="=jrp/server&lt;jrp.server.server"/>
+        <javaElement handleIdentifier="=jrp/server&lt;jrp.server.listener"/>
+        <javaElement handleIdentifier="=jrp/server&lt;jrp.server"/>
+    </selectedElements>
+</jardesc>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jardesc>
+    <jar path="D:/client.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/jrp/client.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="false" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="false" manifestLocation="/jrp/client_MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=jrp/common"/>
+        <javaElement handleIdentifier="=jrp/client&lt;jrp.client.connect"/>
+        <javaElement handleIdentifier="=jrp/client&lt;jrp.client.model"/>
+        <javaElement handleIdentifier="=jrp/client&lt;jrp.client"/>
+    </selectedElements>
+</jardesc>
