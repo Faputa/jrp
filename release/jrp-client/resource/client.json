@@ -6,7 +6,7 @@
 			"localPort":8080
 		}
 	],
-	"serverHost":"lelepark.com",
+	"serverHost":"127.0.0.1",
 	"serverPort":4443,
 	"enableLog":true,
 	"pingTime":60000
