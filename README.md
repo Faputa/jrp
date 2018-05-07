@@ -34,7 +34,7 @@
 
     可以通过两种方式运行，直接运行start.bat/sh或者注册到服务运行（仅windows）。
     
-    需保证服务器上面装有java环境，如果无法直接取得java环境，需在start脚本中制定java。
+    需保证服务器上面装有java环境，如果无法直接取得java环境，需在start脚本中指定java。
 
 #### 配置运行客户端
 * 配置jrp-client/resource/client.json
@@ -44,7 +44,7 @@
             {
                 "remotePort":12345,/*请求服务器监听的端口，对服务器该端口的访问将被转发到本机*/
                 "localHost":"127.0.0.1",/*本机位于内网中的ip*/
-                "localPort":8080/*本机的监听端口，代理的访问将被转发至该端口*/
+                "localPort":8080/*本机的监听端口，对代理的访问将被转发至该端口*/
             }
         ],
         "serverHost":"lelepark.com",/*服务器域名（ip也行）*/
