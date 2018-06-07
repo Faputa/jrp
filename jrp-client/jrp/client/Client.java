@@ -27,6 +27,11 @@ public class Client
 		context.setServerPort(serverPort);
 	}
 
+	public void setAuthToken(String authToken)
+	{
+		context.setAuthToken(authToken);
+	}
+
 	public void setTunnelList(List<Tunnel> tunnelList)
 	{
 		context.setTunnelList(tunnelList);
@@ -51,8 +56,8 @@ public class Client
 			thread.start();
 			while(true)
 			{
-				SocketHelper.sendpack(socket, Message.Ping());
 				try{Thread.sleep(this.pingTime);}catch(InterruptedException e){}
+				SocketHelper.sendpack(socket, Message.Ping());
 			}
 		}
 		catch(Exception e)
@@ -69,6 +74,7 @@ public class Client
 		client.setTunnelList(config.tunnelList);
 		client.setServerHost(config.serverHost);
 		client.setServerPort(config.serverPort);
+		client.setAuthToken(config.authToken);
 		client.setPingTime(config.pingTime);
 		client.setLog(new LoggerImpl().setEnableLog(config.enableLog));
 		client.start();

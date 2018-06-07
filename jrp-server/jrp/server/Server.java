@@ -15,6 +15,11 @@ public class Server
 		context.setPort(port);
 	}
 
+	public void setToken(String token)
+	{
+		context.setToken(token);
+	}
+
 	public void setLog(Logger log)
 	{
 		context.setLog(log);
@@ -48,6 +53,7 @@ public class Server
 
 		Server server = new Server();
 		server.setPort(config.port);
+		server.setToken(config.token);
 		server.setLog(new LoggerImpl().setEnableLog(config.enableLog));
 		server.start();
 	}

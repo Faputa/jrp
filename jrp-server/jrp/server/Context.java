@@ -15,6 +15,7 @@ import jrp.server.model.TunnelInfo;
 public class Context
 {
 	private int port;
+	private String token;
 	private Logger log = new LoggerImpl();// 如果没有注入日志，则使用默认日志
 
 	public int getPort()
@@ -25,6 +26,16 @@ public class Context
 	public void setPort(int port)
 	{
 		this.port = port;
+	}
+
+	public String getToken()
+	{
+		return token;
+	}
+
+	public void setToken(String token)
+	{
+		this.token = token;
 	}
 
 	public Logger getLog()

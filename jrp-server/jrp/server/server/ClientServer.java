@@ -49,9 +49,17 @@ public class ClientServer implements Runnable
 				Protocol protocol = GsonUtil.toBean(msg, Protocol.class);
 				if("Auth".equals(protocol.Type))
 				{
-					clientId = Util.MD5(String.valueOf(System.currentTimeMillis()));
-					context.initOuterLinkQueue(clientId);
-					SocketHelper.sendpack(socket, Message.AuthResp(clientId));
+					if(context.getToken().equals(protocol.AuthToken))
+					{
+						clientId = Util.MD5(String.valueOf(System.currentTimeMillis()));
+						context.initOuterLinkQueue(clientId);
+						SocketHelper.sendpack(socket, Message.AuthResp(clientId, null));
+					}
+					else
+					{
+						SocketHelper.sendpack(socket, Message.AuthResp(null, "authtoken校验失败"));
+						return;
+					}
 				}
 				else if("RegProxy".equals(protocol.Type))
 				{
@@ -77,7 +85,7 @@ public class ClientServer implements Runnable
 					int remotePort = protocol.RemotePort;
 					if(context.getTunnelInfo(remotePort) != null)
 					{
-						String error = "The tunnel " + remotePort + " is already registered.";
+						String error = "管道 " + remotePort + " 已经被注册";
 						SocketHelper.sendpack(socket, Message.NewTunnel(null, error));
 						break;
 					}
@@ -88,7 +96,7 @@ public class ClientServer implements Runnable
 					}
 					catch(Exception e)
 					{
-						String error = "The tunnel " + remotePort + " is already registered.";
+						String error = "管道 " + remotePort + " 已经被注册";
 						SocketHelper.sendpack(socket, Message.NewTunnel(null, error));
 						break;
 					}

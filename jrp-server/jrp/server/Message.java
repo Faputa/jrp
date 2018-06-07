@@ -9,21 +9,21 @@ public class Message
 	{
 	}
 
-	public static String AuthResp(String ClientId)
+	public static String AuthResp(String clientId, String error)
 	{
 		Protocol protocol = new Protocol();
 		protocol.Type = "AuthResp";
-		protocol.ClientId = ClientId;
-		protocol.Error = "";
+		protocol.ClientId = clientId;
+		protocol.Error = error;
 		return GsonUtil.toJson(protocol);
 	}
 
-	public static String NewTunnel(Integer RemotePort, String Error)
+	public static String NewTunnel(Integer remotePort, String error)
 	{
 		Protocol protocol = new Protocol();
 		protocol.Type = "NewTunnel";
-		protocol.RemotePort = RemotePort;
-		protocol.Error = Error;
+		protocol.RemotePort = remotePort;
+		protocol.Error = error;
 		return GsonUtil.toJson(protocol);
 	}
 
@@ -34,11 +34,11 @@ public class Message
 		return GsonUtil.toJson(protocol);
 	}
 
-	public static String StartProxy(Integer RemotePort)
+	public static String StartProxy(Integer remotePort)
 	{
 		Protocol protocol = new Protocol();
 		protocol.Type = "StartProxy";
-		protocol.RemotePort = RemotePort;
+		protocol.RemotePort = remotePort;
 		return GsonUtil.toJson(protocol);
 	}
 

@@ -34,7 +34,7 @@ public class ControlConnect implements Runnable
 		try(Socket socket = this.socket)
 		{
 			String clientId = null;
-			SocketHelper.sendpack(socket, Message.Auth());
+			SocketHelper.sendpack(socket, Message.Auth(context.getAuthToken()));
 			PacketReader pr = new PacketReader(socket);
 			while(true)
 			{
@@ -73,11 +73,20 @@ public class ControlConnect implements Runnable
 				}
 				else if("AuthResp".equals(protocol.Type))
 				{
-					clientId = protocol.ClientId;
-					SocketHelper.sendpack(socket, Message.Ping());
-					for(Tunnel tunnel : context.getTunnelList())
+					if(protocol.Error == null || "".equals(protocol.Error))
 					{
-						SocketHelper.sendpack(socket, Message.ReqTunnel(tunnel));
+						clientId = protocol.ClientId;
+						log.log("客户端注册成功：" + clientId);
+						SocketHelper.sendpack(socket, Message.Ping());
+						for(Tunnel tunnel : context.getTunnelList())
+						{
+							SocketHelper.sendpack(socket, Message.ReqTunnel(tunnel));
+						}
+					}
+					else
+					{
+						log.err("客户端认证失败：" + protocol.Error);
+						return;
 					}
 				}
 			}

@@ -27,6 +27,7 @@
         "sslKeyStore":"resource/你的证书名字.jks",
         "sslKeyStorePassword":"你的证书密码",
         "port":4443,/*服务端用以监听客户端的端口*/
+    	"token":"CMwClAfRttJtFJgo4jYh4PJ4giR8uJxhdkfcjOB1",/*客户端认证Token*/
         "enableLog":true/*是否开启日志*/
     }
     ```
@@ -49,6 +50,7 @@
         ],
         "serverHost":"lelepark.com",/*服务器域名（ip也行）*/
         "serverPort":4443,/*服务器监听客户端的端口*/
+	    "authToken":"CMwClAfRttJtFJgo4jYh4PJ4giR8uJxhdkfcjOB1",/*认证Token*/
         "enableLog":true,/*是否打印日志*/
         "pingTime":60000/*主连接心跳包周期，太短服务器压力太大，太长主连接可能睡死*/
     }

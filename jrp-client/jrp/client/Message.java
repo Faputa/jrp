@@ -10,11 +10,11 @@ public class Message
 	{
 	}
 
-	public static String Auth()
+	public static String Auth(String authToken)
 	{
 		Protocol protocol = new Protocol();
 		protocol.Type = "Auth";
-		protocol.ClientId = "";
+		protocol.AuthToken = authToken;
 		return GsonUtil.toJson(protocol);
 	}
 

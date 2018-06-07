@@ -11,6 +11,7 @@ public class Context
 	private String serverHost;
 	private int serverPort;
 	private List<Tunnel> tunnelList;
+	private String authToken;
 	private Logger log = new LoggerImpl();// 如果没有注入日志，则使用默认日志
 
 	public String getServerHost()
@@ -41,6 +42,16 @@ public class Context
 	public void setTunnelList(List<Tunnel> tunnelList)
 	{
 		this.tunnelList = tunnelList;
+	}
+
+	public String getAuthToken()
+	{
+		return authToken;
+	}
+
+	public void setAuthToken(String authToken)
+	{
+		this.authToken = authToken;
 	}
 
 	public Logger getLog()

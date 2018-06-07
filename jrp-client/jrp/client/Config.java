@@ -10,6 +10,7 @@ public class Config
 	public List<Tunnel> tunnelList = new ArrayList<Tunnel>();
 	public String serverHost = "";
 	public int serverPort = 4443;
+	public String authToken = "";
 	public boolean enableLog = true;
 	public long pingTime = 60000;
 }
