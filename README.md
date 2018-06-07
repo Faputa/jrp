@@ -27,7 +27,7 @@
         "sslKeyStore":"resource/你的证书名字.jks",
         "sslKeyStorePassword":"你的证书密码",
         "port":4443,/*服务端用以监听客户端的端口*/
-    	"token":"CMwClAfRttJtFJgo4jYh4PJ4giR8uJxhdkfcjOB1",/*客户端认证Token*/
+        "token":"CMwClAfRttJtFJgo4jYh4PJ4giR8uJxhdkfcjOB1",/*客户端认证Token*/
         "enableLog":true/*是否开启日志*/
     }
     ```
