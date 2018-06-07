@@ -9,7 +9,7 @@ import jrp.log.Logger;
 import jrp.log.LoggerImpl;
 import jrp.socket.SocketHelper;
 import jrp.util.GsonUtil;
-import jrp.util.UBUtil;
+import jrp.util.Util;
 
 public class Client
 {
@@ -63,7 +63,7 @@ public class Client
 
 	public static void main(String[] args)
 	{
-		String json = UBUtil.readTextFile(UBUtil.getLocation("resource/client.json"));
+		String json = Util.readTextFile(Util.getLocation("resource/client.json"));
 		Config config = GsonUtil.toBean(json, Config.class);
 		Client client = new Client();
 		client.setTunnelList(config.tunnelList);

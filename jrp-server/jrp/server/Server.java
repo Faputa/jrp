@@ -4,7 +4,7 @@ import jrp.log.Logger;
 import jrp.log.LoggerImpl;
 import jrp.server.listener.ClientListener;
 import jrp.util.GsonUtil;
-import jrp.util.UBUtil;
+import jrp.util.Util;
 
 public class Server
 {
@@ -40,10 +40,10 @@ public class Server
 
 	public static void main(String[] args)
 	{
-		String json = UBUtil.readTextFile(UBUtil.getLocation("resource/server.json"));
+		String json = Util.readTextFile(Util.getLocation("resource/server.json"));
 		Config config = GsonUtil.toBean(json, Config.class);
 
-		System.setProperty("javax.net.ssl.keyStore", UBUtil.getLocation(config.sslKeyStore));
+		System.setProperty("javax.net.ssl.keyStore", Util.getLocation(config.sslKeyStore));
 		System.setProperty("javax.net.ssl.keyStorePassword", config.sslKeyStorePassword);
 
 		Server server = new Server();

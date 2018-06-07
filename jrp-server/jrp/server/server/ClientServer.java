@@ -16,7 +16,7 @@ import jrp.server.model.TunnelInfo;
 import jrp.socket.PacketReader;
 import jrp.socket.SocketHelper;
 import jrp.util.GsonUtil;
-import jrp.util.UBUtil;
+import jrp.util.Util;
 
 public class ClientServer implements Runnable
 {
@@ -49,7 +49,7 @@ public class ClientServer implements Runnable
 				Protocol protocol = GsonUtil.toBean(msg, Protocol.class);
 				if("Auth".equals(protocol.Type))
 				{
-					clientId = UBUtil.MD5(String.valueOf(System.currentTimeMillis()));
+					clientId = Util.MD5(String.valueOf(System.currentTimeMillis()));
 					context.initOuterLinkQueue(clientId);
 					SocketHelper.sendpack(socket, Message.AuthResp(clientId));
 				}
