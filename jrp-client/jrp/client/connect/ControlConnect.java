@@ -56,7 +56,7 @@ public class ControlConnect implements Runnable
 					}
 					catch(Exception e)
 					{
-						log.err(e.getMessage());
+						log.err(e.toString());
 					}
 				}
 				else if("NewTunnel".equals(protocol.Type))
@@ -93,7 +93,7 @@ public class ControlConnect implements Runnable
 		}
 		catch(IOException e)
 		{
-			log.err(e.getMessage());
+			log.err(e.toString());
 		}
 	}
 }
