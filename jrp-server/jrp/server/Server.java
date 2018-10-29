@@ -12,17 +12,22 @@ public class Server
 
 	public void setPort(int port)
 	{
-		context.setPort(port);
+		context.port = port;
+	}
+
+	public void setTimeout(int timeout)
+	{
+		context.timeout = timeout;
 	}
 
 	public void setToken(String token)
 	{
-		context.setToken(token);
+		context.token = token;
 	}
 
 	public void setLog(Logger log)
 	{
-		context.setLog(log);
+		context.log = log;
 	}
 
 	public void start()
@@ -34,7 +39,8 @@ public class Server
 			clientListenerThread.start();
 			while(true)
 			{
-				try{Thread.sleep(5000);}catch(InterruptedException e){}
+				try{Thread.sleep(50000);}catch(InterruptedException e){}
+				context.closeIdleClient();
 			}
 		}
 		catch(Exception e)
@@ -53,6 +59,7 @@ public class Server
 
 		Server server = new Server();
 		server.setPort(config.port);
+		server.setTimeout(config.timeout);
 		server.setToken(config.token);
 		server.setLog(new LoggerImpl().setEnableLog(config.enableLog));
 		server.start();

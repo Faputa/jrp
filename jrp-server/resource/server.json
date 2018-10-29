@@ -3,5 +3,6 @@
 	"sslKeyStorePassword":"123456",
 	"port":4443,
 	"token":"CMwClAfRttJtFJgo4jYh4PJ4giR8uJxhdkfcjOB1",
+	"timeout":120000,
 	"enableLog":true
 }

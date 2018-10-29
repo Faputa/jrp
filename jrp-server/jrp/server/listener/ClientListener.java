@@ -20,15 +20,15 @@ public class ClientListener implements Runnable
 	public ClientListener(Context context) throws IOException
 	{
 		this.context = context;
-		this.log = context.getLog();
+		this.log = context.log;
 	}
 
 	@Override
 	public void run()
 	{
-		try(ServerSocket ssocket = SocketHelper.newSSLServerSocket(context.getPort()))
+		try(ServerSocket ssocket = SocketHelper.newSSLServerSocket(context.port))
 		{
-			log.log("监听建立成功：[%s]", context.getPort());
+			log.log("监听建立成功：[%s]", context.port);
 			while(true)
 			{
 				Socket socket = ssocket.accept();

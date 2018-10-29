@@ -28,7 +28,7 @@ public class ClientServer implements Runnable
 	{
 		this.socket = socket;
 		this.context = context;
-		this.log = context.getLog();
+		this.log = context.log;
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class ClientServer implements Runnable
 		String clientId = null;
 		try(Socket socket = this.socket)
 		{
-			PacketReader pr = new PacketReader(socket);
+			PacketReader pr = new PacketReader(socket, context.timeout);
 			while(true)
 			{
 				String msg = pr.read();
@@ -49,10 +49,10 @@ public class ClientServer implements Runnable
 				Protocol protocol = GsonUtil.toBean(msg, Protocol.class);
 				if("Auth".equals(protocol.Type))
 				{
-					if(context.getToken().equals(protocol.AuthToken))
+					if(context.token.equals(protocol.AuthToken))
 					{
 						clientId = Util.MD5(String.valueOf(System.currentTimeMillis()));
-						context.initOuterLinkQueue(clientId);
+						context.initClientInfo(clientId, socket);
 						SocketHelper.sendpack(socket, Message.AuthResp(clientId, null));
 					}
 					else
@@ -83,18 +83,6 @@ public class ClientServer implements Runnable
 				else if("ReqTunnel".equals(protocol.Type))
 				{
 					int remotePort = protocol.RemotePort;
-					if(context.getTunnelInfo(remotePort) != null)
-					{
-						// 长江后浪推前浪
-						TunnelInfo _tunnel = context.getTunnelInfo(remotePort);
-						String _clientId = _tunnel.getClientId();
-						context.delTunnelInfo(remotePort);
-						if(context.getTunnelInfos(_clientId).size() == 0)
-						{
-							// 前浪死在沙滩上
-							_tunnel.getControlSocket().close();
-						}
-					}
 					ServerSocket serverSocket;
 					try
 					{
@@ -129,8 +117,7 @@ public class ClientServer implements Runnable
 		}
 		if(clientId != null)
 		{
-			context.delOuterLinkQueue(clientId);
-			context.delTunnelInfos(clientId);
+			context.delClientInfo(clientId);
 		}
 	}
 }

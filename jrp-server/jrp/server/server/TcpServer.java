@@ -3,6 +3,7 @@
  */
 package jrp.server.server;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
 
@@ -23,7 +24,7 @@ public class TcpServer implements Runnable
 	{
 		this.socket = socket;
 		this.context = context;
-		this.log = context.getLog();
+		this.log = context.log;
 	}
 
 	@Override
@@ -42,10 +43,10 @@ public class TcpServer implements Runnable
 				outerLink.setControlSocket(tunnel.getControlSocket());
 				try
 				{
-					// 此时controlSocket可能已经断开
+					// 捕获可能因网络断开而产生的异常
 					SocketHelper.sendpack(tunnel.getControlSocket(), Message.ReqProxy());
 				}
-				catch(Exception e)
+				catch(IOException e)
 				{
 					tunnel.getControlSocket().close();
 					return;
