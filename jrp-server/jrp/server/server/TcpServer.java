@@ -40,7 +40,16 @@ public class TcpServer implements Runnable
 				outerLink.setRemotePort(remotePort);
 				outerLink.setOuterSocket(socket);
 				outerLink.setControlSocket(tunnel.getControlSocket());
-				SocketHelper.sendpack(tunnel.getControlSocket(), Message.ReqProxy());
+				try
+				{
+					// 此时controlSocket可能已经断开
+					SocketHelper.sendpack(tunnel.getControlSocket(), Message.ReqProxy());
+				}
+				catch(Exception e)
+				{
+					tunnel.getControlSocket().close();
+					return;
+				}
 				context.offerOuterLink(tunnel.getClientId(), outerLink);
 				try(Socket proxySocket = outerLink.pollProxySocket(100, TimeUnit.SECONDS))// 最多等待100秒
 				{

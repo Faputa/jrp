@@ -1,9 +1,7 @@
 package jrp.server;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -48,8 +46,8 @@ public class Context
 		this.log = log;
 	}
 
-	private Map<String, Queue<OuterLink>> outerLinkQueueMap = new ConcurrentHashMap<String, Queue<OuterLink>>();
-	private Map<String, TunnelInfo> tunnelInfoMap = new ConcurrentHashMap<String, TunnelInfo>();
+	private Map<String, Queue<OuterLink>> outerLinkQueueMap = new ConcurrentHashMap<>();
+	private Map<Integer, TunnelInfo> tunnelInfoMap = new ConcurrentHashMap<>();
 
 	public OuterLink pollOuterLink(String clientId)
 	{
@@ -78,21 +76,50 @@ public class Context
 
 	public TunnelInfo getTunnelInfo(int remotePort)
 	{
-		return tunnelInfoMap.get(String.valueOf(remotePort));
+		return tunnelInfoMap.get(remotePort);
 	}
 
 	public void putTunnelInfo(int remotePort, TunnelInfo tunnelInfo)
 	{
-		tunnelInfoMap.put(String.valueOf(remotePort), tunnelInfo);
+		tunnelInfoMap.put(remotePort, tunnelInfo);
 	}
 
-	public void delTunnelInfo(String clientId)
+	public List<TunnelInfo> getTunnelInfos(String clientId)
 	{
-		Iterator<Map.Entry<String, TunnelInfo>> it = tunnelInfoMap.entrySet().iterator();
+		List<TunnelInfo> list = new ArrayList<>();
+		for(Map.Entry<Integer, TunnelInfo> entry : tunnelInfoMap.entrySet())
+		{
+			if(entry.getValue().getClientId().equals(clientId))
+			{
+				list.add(entry.getValue());
+			}
+		}
+		return list;
+	}
+
+	public void delTunnelInfo(int remotePort)
+	{
+		TunnelInfo tunnel = tunnelInfoMap.get(remotePort);
+		if(tunnel.getTcpServerSocket() != null)
+		{
+			try
+			{
+				tunnel.getTcpServerSocket().close();
+			}
+			catch(IOException e)
+			{
+			}
+		}
+		tunnelInfoMap.remove(remotePort);
+	}
+
+	public void delTunnelInfos(String clientId)
+	{
+		Iterator<Map.Entry<Integer, TunnelInfo>> it = tunnelInfoMap.entrySet().iterator();
 		while(it.hasNext())
 		{
 			TunnelInfo tunnel = it.next().getValue();
-			if(clientId.equals(tunnel.getClientId()))
+			if(tunnel.getClientId().equals(clientId))
 			{
 				if(tunnel.getTcpServerSocket() != null)
 				{

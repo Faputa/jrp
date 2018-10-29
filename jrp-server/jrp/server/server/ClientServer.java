@@ -85,9 +85,15 @@ public class ClientServer implements Runnable
 					int remotePort = protocol.RemotePort;
 					if(context.getTunnelInfo(remotePort) != null)
 					{
-						String error = "管道 " + remotePort + " 已经被注册";
-						SocketHelper.sendpack(socket, Message.NewTunnel(null, error));
-						break;
+						// 长江后浪推前浪
+						TunnelInfo _tunnel = context.getTunnelInfo(remotePort);
+						String _clientId = _tunnel.getClientId();
+						context.delTunnelInfo(remotePort);
+						if(context.getTunnelInfos(_clientId).size() == 0)
+						{
+							// 前浪死在沙滩上
+							_tunnel.getControlSocket().close();
+						}
 					}
 					ServerSocket serverSocket;
 					try
@@ -96,7 +102,7 @@ public class ClientServer implements Runnable
 					}
 					catch(Exception e)
 					{
-						String error = "管道 " + remotePort + " 已经被注册";
+						String error = "端口 " + remotePort + " 已经被占用";
 						SocketHelper.sendpack(socket, Message.NewTunnel(null, error));
 						break;
 					}
@@ -124,7 +130,7 @@ public class ClientServer implements Runnable
 		if(clientId != null)
 		{
 			context.delOuterLinkQueue(clientId);
-			context.delTunnelInfo(clientId);
+			context.delTunnelInfos(clientId);
 		}
 	}
 }
