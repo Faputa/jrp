@@ -63,8 +63,7 @@ public class ClientServer implements Runnable
 				}
 				else if("RegProxy".equals(protocol.Type))
 				{
-					String _clientId = protocol.ClientId;
-					OuterLink link  = context.pollOuterLink(_clientId);
+					OuterLink link  = context.pollOuterLink(protocol.ClientId);
 					if(link == null)
 					{
 						break;
