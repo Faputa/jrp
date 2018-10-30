@@ -52,7 +52,7 @@ public class TcpServer implements Runnable
 					return;
 				}
 				context.offerOuterLink(tunnel.getClientId(), outerLink);
-				try(Socket proxySocket = outerLink.pollProxySocket(100, TimeUnit.SECONDS))// 最多等待100秒
+				try(Socket proxySocket = outerLink.pollProxySocket(60, TimeUnit.SECONDS))// 最多等待60秒
 				{
 					if(proxySocket != null)
 					{
