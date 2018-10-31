@@ -49,17 +49,14 @@ public class ClientServer implements Runnable
 				Protocol protocol = GsonUtil.toBean(msg, Protocol.class);
 				if("Auth".equals(protocol.Type))
 				{
-					if(context.token.equals(protocol.AuthToken))
-					{
-						clientId = Util.MD5(String.valueOf(System.currentTimeMillis()));
-						context.initClientInfo(clientId, socket);
-						SocketHelper.sendpack(socket, Message.AuthResp(clientId, null));
-					}
-					else
+					if(context.token != null && !context.token.equals(protocol.AuthToken))
 					{
 						SocketHelper.sendpack(socket, Message.AuthResp(null, "authtoken校验失败"));
 						return;
 					}
+					clientId = Util.MD5(String.valueOf(System.currentTimeMillis()));
+					context.initClientInfo(clientId, socket);
+					SocketHelper.sendpack(socket, Message.AuthResp(clientId, null));
 				}
 				else if("RegProxy".equals(protocol.Type))
 				{
