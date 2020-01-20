@@ -1,7 +1,7 @@
 /**
  * 处理用户建立的tcp连接
  */
-package jrp.server.server;
+package jrp.server.handler;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -14,13 +14,13 @@ import jrp.server.model.OuterLink;
 import jrp.server.model.TunnelInfo;
 import jrp.socket.SocketHelper;
 
-public class TcpServer implements Runnable
+public class TcpHandler implements Runnable
 {
 	private Socket socket;
 	private Context context;
 	private Logger log;
 
-	public TcpServer(Socket socket, Context context)
+	public TcpHandler(Socket socket, Context context)
 	{
 		this.socket = socket;
 		this.context = context;

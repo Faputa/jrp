@@ -7,7 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import jrp.server.Context;
-import jrp.server.server.TcpServer;
+import jrp.server.handler.TcpHandler;
 
 public class TcpListener implements Runnable
 {
@@ -28,7 +28,7 @@ public class TcpListener implements Runnable
 			while(true)
 			{
 				Socket socket = ssocket.accept();
-				Thread thread = new Thread(new TcpServer(socket, context));
+				Thread thread = new Thread(new TcpHandler(socket, context));
 				thread.setDaemon(true);
 				thread.start();
 			}

@@ -47,17 +47,32 @@ public class Client
 		this.pingTime = pingTime;
 	}
 
+	private Socket newControlConnect() throws Exception {
+		Socket socket = SocketHelper.newSSLSocket(context.getServerHost(), context.getServerPort());
+		Thread thread = new Thread(new ControlConnect(socket, context));
+		thread.setDaemon(true);
+		thread.start();
+		return socket;
+	}
+
 	public void start()
 	{
-		try(Socket socket = SocketHelper.newSSLSocket(context.getServerHost(), context.getServerPort()))
+		try
 		{
-			Thread thread = new Thread(new ControlConnect(socket, context));
-			thread.setDaemon(true);
-			thread.start();
+			Socket socket = newControlConnect();
 			while(true)
 			{
-				try{Thread.sleep(this.pingTime);}catch(InterruptedException e){}
-				SocketHelper.sendpack(socket, Message.Ping());
+				try {Thread.sleep(this.pingTime);} catch (InterruptedException e){}
+				try {
+					if (socket.isClosed()) {
+						return;
+					}
+					SocketHelper.sendpack(socket, Message.Ping());
+				} catch (Exception e) {
+					log.err(e.toString());
+					try {socket.close();} catch(Exception _) {}
+					try {socket = newControlConnect();} catch(Exception ee) {log.err(ee.toString());}
+				}
 			}
 		}
 		catch(Exception e)

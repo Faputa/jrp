@@ -9,7 +9,7 @@ import java.net.Socket;
 
 import jrp.log.Logger;
 import jrp.server.Context;
-import jrp.server.server.ClientServer;
+import jrp.server.handler.ClientHandler;
 import jrp.socket.SocketHelper;
 
 public class ClientListener implements Runnable
@@ -32,7 +32,7 @@ public class ClientListener implements Runnable
 			while(true)
 			{
 				Socket socket = ssocket.accept();
-				Thread thread = new Thread(new ClientServer(socket, context));
+				Thread thread = new Thread(new ClientHandler(socket, context));
 				thread.setDaemon(true);
 				thread.start();
 			}

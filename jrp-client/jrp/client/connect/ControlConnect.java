@@ -41,7 +41,7 @@ public class ControlConnect implements Runnable
 				String msg = pr.read();
 				if(msg == null)
 				{
-					break;
+					return;
 				}
 				log.log("收到服务器信息：" + msg);
 				Protocol protocol = GsonUtil.toBean(msg, Protocol.class);

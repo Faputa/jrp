@@ -1,7 +1,7 @@
 /**
  * 处理Ngrok建立的连接
  */
-package jrp.server.server;
+package jrp.server.handler;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -18,13 +18,13 @@ import jrp.socket.SocketHelper;
 import jrp.util.GsonUtil;
 import jrp.util.Util;
 
-public class ClientServer implements Runnable
+public class ClientHandler implements Runnable
 {
 	private Socket socket;
 	private Context context;
 	private Logger log;
 
-	public ClientServer(Socket socket, Context context)
+	public ClientHandler(Socket socket, Context context)
 	{
 		this.socket = socket;
 		this.context = context;
