@@ -21,8 +21,7 @@ public class LocalConnect implements Runnable
 	@Override
 	public void run()
 	{
-		try(Socket localSocket = this.localSocket;
-			Socket remoteSocket = this.remoteSocket)
+		try (Socket localSocket = this.localSocket; Socket remoteSocket = this.remoteSocket)
 		{
 			SocketHelper.forward(localSocket, remoteSocket);
 		}

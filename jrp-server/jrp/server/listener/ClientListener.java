@@ -15,20 +15,19 @@ import jrp.socket.SocketHelper;
 public class ClientListener implements Runnable
 {
 	private Context context;
-	private Logger log;
+	private Logger log = Logger.getLogger();
 
-	public ClientListener(Context context) throws IOException
+	public ClientListener(Context context)
 	{
 		this.context = context;
-		this.log = context.log;
 	}
 
 	@Override
 	public void run()
 	{
-		try(ServerSocket ssocket = SocketHelper.newSSLServerSocket(context.port))
+		try (ServerSocket ssocket = SocketHelper.newServerSocket(context.port))
 		{
-			log.log("监听建立成功：[%s]", context.port);
+			log.info("监听建立成功：[%s]", context.port);
 			while(true)
 			{
 				Socket socket = ssocket.accept();

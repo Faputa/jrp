@@ -1,15 +1,17 @@
 package jrp.log;
 
-import jrp.util.Util;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-public class LoggerImpl implements Logger
+public class LoggerImpl extends Logger
 {
-	private boolean enableLog = true;
-
-	public boolean isEnableLog()
+	public static String getTime()
 	{
-		return enableLog;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return sdf.format(new Date());
 	}
+	
+	private boolean enableLog = true;
 
 	public LoggerImpl setEnableLog(boolean enableLog)
 	{
@@ -18,11 +20,11 @@ public class LoggerImpl implements Logger
 	}
 
 	@Override
-	public synchronized void log(String fmt, Object... args)
+	public synchronized void info(String fmt, Object... args)
 	{
 		if(enableLog)
 		{
-			System.out.printf("[%s] %s\n", Util.getTime(), String.format(fmt, args));
+			System.out.printf("[%s] %s\n", getTime(), String.format(fmt, args));
 		}
 	}
 
@@ -31,7 +33,7 @@ public class LoggerImpl implements Logger
 	{
 		if(enableLog)
 		{
-			System.err.printf("[%s] %s\n", Util.getTime(), String.format(fmt, args));
+			System.err.printf("[%s] %s\n", getTime(), String.format(fmt, args));
 		}
 	}
 }

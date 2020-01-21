@@ -3,8 +3,8 @@ package jrp.server;
 import jrp.log.Logger;
 import jrp.log.LoggerImpl;
 import jrp.server.listener.ClientListener;
+import jrp.util.FileUtil;
 import jrp.util.GsonUtil;
-import jrp.util.Util;
 
 public class Server
 {
@@ -27,20 +27,36 @@ public class Server
 
 	public void setLog(Logger log)
 	{
-		context.log = log;
+		Logger.setLogger(log);
 	}
 
 	public void start()
 	{
 		try
 		{
-			Thread clientListenerThread = new Thread(new ClientListener(context));
-			clientListenerThread.setDaemon(true);
-			clientListenerThread.start();
+			Thread clientListener = null;
+			long lastTime = System.currentTimeMillis();
 			while(true)
 			{
-				try{Thread.sleep(50000);}catch(InterruptedException e){}
-				context.closeIdleClient();
+				if(clientListener == null || !clientListener.isAlive())
+				{
+					clientListener = new Thread(new ClientListener(context));
+					clientListener.setDaemon(true);
+					clientListener.start();
+				}
+				// 关闭空闲的客户端
+				if(System.currentTimeMillis() > lastTime + 50000)
+				{
+					context.closeIdleClient();
+					lastTime = System.currentTimeMillis();
+				}
+				try
+				{
+					Thread.sleep(10000);
+				}
+				catch(InterruptedException e)
+				{
+				}
 			}
 		}
 		catch(Exception e)
@@ -49,14 +65,11 @@ public class Server
 		}
 	}
 
-	public static void main(String[] args)
+	public static void main(String[] args) throws Exception
 	{
-		String json = Util.readTextFile(Util.getLocation("resource/server.json"));
+		String filename = args.length > 0 ? args[0] : "classpath:server.json";
+		String json = FileUtil.readTextFile(filename);
 		Config config = GsonUtil.toBean(json, Config.class);
-
-		System.setProperty("javax.net.ssl.keyStore", Util.getLocation(config.sslKeyStore));
-		System.setProperty("javax.net.ssl.keyStorePassword", config.sslKeyStorePassword);
-
 		Server server = new Server();
 		server.setPort(config.port);
 		server.setTimeout(config.timeout);

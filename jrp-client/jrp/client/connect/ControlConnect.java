@@ -19,74 +19,73 @@ public class ControlConnect implements Runnable
 {
 	private Socket socket;
 	private Context context;
-	private Logger log;
+	private Logger log = Logger.getLogger();
 
 	public ControlConnect(Socket socket, Context context)
 	{
 		this.socket = socket;
 		this.context = context;
-		this.log = context.getLog();
 	}
 
 	@Override
 	public void run()
 	{
-		try(Socket socket = this.socket)
+		try (Socket socket = this.socket)
 		{
-			String clientId = null;
-			SocketHelper.sendpack(socket, Message.Auth(context.getAuthToken()));
+			SocketHelper.sendpack(socket, Message.Auth(context.authToken));
 			PacketReader pr = new PacketReader(socket);
-			while(true)
+			String msg = pr.read();
+			if(msg == null)
 			{
-				String msg = pr.read();
-				if(msg == null)
+				// 服务器主动关闭连接，正常退出
+				return;
+			}
+			log.info("收到服务器信息：" + msg);
+			Protocol protocol = GsonUtil.toBean(msg, Protocol.class);
+			if("AuthResp".equals(protocol.Type))
+			{
+				if(protocol.Error != null)
 				{
+					log.err("客户端认证失败：" + protocol.Error);
 					return;
 				}
-				log.log("收到服务器信息：" + msg);
-				Protocol protocol = GsonUtil.toBean(msg, Protocol.class);
-				if("ReqProxy".equals(protocol.Type))
+				String clientId = protocol.ClientId;
+				log.info("客户端注册成功：" + clientId);
+				for(Tunnel tunnel : context.tunnelList)
 				{
-					try
-					{
-						Socket remoteSocket = SocketHelper.newSSLSocket(context.getServerHost(), context.getServerPort());
-						Thread thread = new Thread(new ProxyConnect(remoteSocket, clientId, context));
-						thread.setDaemon(true);
-						thread.start();
-					}
-					catch(Exception e)
-					{
-						log.err(e.toString());
-					}
+					SocketHelper.sendpack(socket, Message.ReqTunnel(tunnel));
 				}
-				else if("NewTunnel".equals(protocol.Type))
+				while(true)
 				{
-					if(protocol.Error == null || "".equals(protocol.Error))
+					msg = pr.read();
+					if(msg == null)
 					{
-						log.log("管道注册成功：%s:%d", context.getServerHost(), protocol.RemotePort);
+						return;
 					}
-					else
+					log.info("收到服务器信息：" + msg);
+					protocol = GsonUtil.toBean(msg, Protocol.class);
+					if("ReqProxy".equals(protocol.Type))
 					{
-						log.err("管道注册失败：" + protocol.Error);
-						try{Thread.sleep(30);}catch(InterruptedException e){}
-					}
-				}
-				else if("AuthResp".equals(protocol.Type))
-				{
-					if(protocol.Error == null || "".equals(protocol.Error))
-					{
-						clientId = protocol.ClientId;
-						log.log("客户端注册成功：" + clientId);
-						SocketHelper.sendpack(socket, Message.Ping());
-						for(Tunnel tunnel : context.getTunnelList())
+						try
 						{
-							SocketHelper.sendpack(socket, Message.ReqTunnel(tunnel));
+							Socket remoteSocket = SocketHelper.newSocket(context.serverHost, context.serverPort);
+							Thread thread = new Thread(new ProxyConnect(remoteSocket, clientId, context));
+							thread.setDaemon(true);
+							thread.start();
+						}
+						catch(Exception e)
+						{
+							log.err(e.toString());
 						}
 					}
-					else
+					else if("NewTunnel".equals(protocol.Type))
 					{
-						log.err("客户端认证失败：" + protocol.Error);
-						return;
+						if(protocol.Error != null)
+						{
+							log.err("管道注册失败：" + protocol.Error);
+							return;
+						}
+						log.info("管道注册成功：%s:%d", context.serverHost, protocol.RemotePort);
 					}
 				}
 			}

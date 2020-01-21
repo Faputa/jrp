@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Class-Path: lib/gson-2.8.0.jar
+Class-Path: lib/gson-2.8.5.jar
 Main-Class: jrp.server.Server

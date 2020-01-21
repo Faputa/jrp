@@ -19,75 +19,70 @@ public class ProxyConnect implements Runnable
 	private String clientId;
 	private Socket socket;
 	private Context context;
-	private Logger log;
+	private Logger log = Logger.getLogger();
 
 	public ProxyConnect(Socket socket, String clientId, Context context)
 	{
 		this.socket = socket;
 		this.clientId = clientId;
 		this.context = context;
-		this.log = context.getLog();
 	}
 
 	@Override
 	public void run()
 	{
-		try(Socket socket = this.socket)
+		try (Socket socket = this.socket)
 		{
 			SocketHelper.sendpack(socket, Message.RegProxy(clientId));
 			PacketReader pr = new PacketReader(socket);
-			while(true)
+			String msg = pr.read();
+			if(msg == null)
 			{
-				String msg = pr.read();
-				if(msg == null)
+				return;
+			}
+			log.info("收到服务器信息：" + msg);
+			Protocol protocol = GsonUtil.toBean(msg, Protocol.class);
+			if("StartProxy".equals(protocol.Type))
+			{
+				Tunnel tunnel = getTunnelByUrl(protocol.RemotePort);
+				if(tunnel == null)
 				{
-					break;
+					String html = "没有找到对应的管道：" + context.serverHost + ":" + protocol.RemotePort;
+					log.err(html);
+					String header = "HTTP/1.0 404 Not Found\r\n";
+					header += "Content-Length: " + html.getBytes().length + "\r\n\r\n";
+					header = header + html;
+					SocketHelper.sendbuf(socket, header.getBytes());
+					return;
 				}
-				log.log("收到服务器信息：" + msg);
-				Protocol protocol = GsonUtil.toBean(msg, Protocol.class);
-				if("StartProxy".equals(protocol.Type))
+				log.info("建立本地连接：[host]=%s [port]=%s", tunnel.getLocalHost(), tunnel.getLocalPort());
+				try (Socket localSocket = SocketHelper.newSocket(tunnel.getLocalHost(), tunnel.getLocalPort()))
 				{
-					Tunnel tunnel = getTunnelByUrl(protocol.RemotePort);
-					if(tunnel == null)
+					Thread thread = new Thread(new LocalConnect(localSocket, socket));
+					thread.setDaemon(true);
+					thread.start();
+					try
 					{
-						String html = "没有找到对应的管道：" + context.getServerHost() + ":" + protocol.RemotePort;
-						log.err(html);
-						String header = "HTTP/1.0 404 Not Found\r\n";
-						header += "Content-Length: " + html.getBytes().length + "\r\n\r\n";
-						header = header + html;
-						SocketHelper.sendbuf(socket, header.getBytes());
-						break;
-					}
-					log.log("建立本地连接：[host]=%s [port]=%s", tunnel.getLocalHost(), tunnel.getLocalPort());
-					try(Socket localSocket = SocketHelper.newSocket(tunnel.getLocalHost(), tunnel.getLocalPort()))
-					{
-						Thread thread = new Thread(new LocalConnect(localSocket, socket));
-						thread.setDaemon(true);
-						thread.start();
-						try
-						{
-							SocketHelper.forward(socket, localSocket);
-						}
-						catch(Exception e)
-						{
-						}
-						break;
+						SocketHelper.forward(socket, localSocket);
 					}
 					catch(Exception e)
 					{
-						log.err("本地连接建立失败：[host]=%s [port]=%s", tunnel.getLocalHost(), tunnel.getLocalPort());
-						String html = "<html><body style=\"background-color: #97a8b9\"><div style=\"margin:auto; width:400px;padding: 20px 60px; background-color: #D3D3D3; border: 5px solid maroon;\"><h2>Tunnel ";
-						html += context.getServerHost() + ":" + protocol.RemotePort;
-						html += " unavailable</h2><p>Unable to initiate connection to <strong>";
-						html += tunnel.getLocalHost() + ":" + String.valueOf(tunnel.getLocalPort());
-						html += "</strong>. This port is not yet available for web server.</p>";
-						String header = "HTTP/1.0 502 Bad Gateway\r\n";
-						header += "Content-Type: text/html\r\n";
-						header += "Content-Length: " + html.getBytes().length;
-						header += "\r\n\r\n" + html;
-						SocketHelper.sendbuf(socket, header.getBytes());
-						break;
+						// ignore
 					}
+				}
+				catch(Exception e)
+				{
+					log.err("本地连接建立失败：[host]=%s [port]=%s", tunnel.getLocalHost(), tunnel.getLocalPort());
+					String html = "<html><body style=\"background-color: #97a8b9\"><div style=\"margin:auto; width:400px;padding: 20px 60px; background-color: #D3D3D3; border: 5px solid maroon;\"><h2>Tunnel ";
+					html += context.serverHost + ":" + protocol.RemotePort;
+					html += " unavailable</h2><p>Unable to initiate connection to <strong>";
+					html += tunnel.getLocalHost() + ":" + String.valueOf(tunnel.getLocalPort());
+					html += "</strong>. This port is not yet available for web server.</p>";
+					String header = "HTTP/1.0 502 Bad Gateway\r\n";
+					header += "Content-Type: text/html\r\n";
+					header += "Content-Length: " + html.getBytes().length;
+					header += "\r\n\r\n" + html;
+					SocketHelper.sendbuf(socket, header.getBytes());
 				}
 			}
 		}
@@ -99,7 +94,7 @@ public class ProxyConnect implements Runnable
 
 	private Tunnel getTunnelByUrl(int remotePort)
 	{
-		for(Tunnel tunnel : context.getTunnelList())
+		for(Tunnel tunnel : context.tunnelList)
 		{
 			if(remotePort == tunnel.getRemotePort())
 			{

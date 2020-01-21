@@ -1,20 +1,10 @@
 package jrp.socket;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.net.ServerSocketFactory;
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLServerSocketFactory;
-import javax.net.ssl.SSLSocket;
 
 import jrp.util.ByteUtil;
 
@@ -29,30 +19,16 @@ public class SocketHelper
 		return new Socket(host, port);
 	}
 
-	public static SSLSocket newSSLSocket(String host, int port) throws Exception
-	{
-		TrustAllSSLSocketFactory sf = new TrustAllSSLSocketFactory();
-		return sf.createSocket(host, port);
-	}
-
 	public static ServerSocket newServerSocket(int port) throws IOException
 	{
 		return new ServerSocket(port);
-	}
-
-	public static SSLServerSocket newSSLServerSocket(int port) throws IOException
-	{
-		ServerSocketFactory ssf = SSLServerSocketFactory.getDefault();
-		SSLServerSocket ssocket = (SSLServerSocket) ssf.createServerSocket(port);
-		ssocket.setNeedClientAuth(false);
-		return ssocket;
 	}
 
 	public static void sendpack(Socket socket, String msg) throws IOException
 	{
 		OutputStream os = socket.getOutputStream();
 		byte[] bs = msg.getBytes();
-		os.write(ByteUtil.concat(ByteUtil.packInt(bs.length), bs));
+		os.write(ByteUtil.concat(ByteUtil.encodeInt(bs.length), bs));
 		os.flush();
 	}
 
@@ -75,54 +51,36 @@ public class SocketHelper
 		return ByteUtil.subArr(buf, 0, len);
 	}
 
-	public static Map<String, String> readHttpHead(Socket socket) throws IOException
+	public static void safeClose(Socket socket)
 	{
-		Map<String, String> map = new HashMap<String, String>();
-		InputStream is = socket.getInputStream();
-		BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-		String line;
-		while((line = br.readLine()) != null)
+		if(socket == null)
 		{
-			if("".equals(line))
-			{
-				break;
-			}
-			String[] ss = line.split(": ");
-			if(ss.length == 1)
-			{
-				//do nothing
-			}
-			else if(ss.length == 2)
-			{
-				map.put(ss[0], ss[1]);
-			}
+			return;
 		}
-		return map;
+		try
+		{
+			socket.close();
+		}
+		catch(IOException e)
+		{
+			// ignore
+		}
 	}
 
-	public static Map<String, String> readHttpHead(byte[] buf) throws IOException
+	public static void safeClose(ServerSocket serverSocket)
 	{
-		Map<String, String> map = new HashMap<String, String>();
-		InputStream is = new ByteArrayInputStream(buf);
-		BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-		String line;
-		while((line = br.readLine()) != null)
+		if(serverSocket == null)
 		{
-			if("".equals(line))
-			{
-				return map;
-			}
-			String[] ss = line.split(": ");
-			if(ss.length == 1)
-			{
-				//do nothing
-			}
-			else if(ss.length == 2)
-			{
-				map.put(ss[0], ss[1]);
-			}
+			return;
 		}
-		return null;// 如果没有完整读取head会返回null
+		try
+		{
+			serverSocket.close();
+		}
+		catch(IOException e)
+		{
+			// ignore
+		}
 	}
 
 	public static void forward(Socket s1, Socket s2) throws IOException

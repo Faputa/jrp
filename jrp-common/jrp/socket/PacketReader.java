@@ -29,7 +29,7 @@ public class PacketReader
 		{
 			if(para.length >= 8)
 			{
-				int size = ByteUtil.unpackInt(ByteUtil.subArr(para, 0, 8));
+				int size = ByteUtil.decodeInt(ByteUtil.subArr(para, 0, 8));
 				if(para.length >= size + 8)
 				{
 					String str = new String(para, 8, size);

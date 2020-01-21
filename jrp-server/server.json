@@ -1,0 +1,6 @@
+{
+    "port":1688,
+    "token":"DB6F4AF22E23ABCEA2099DA82741B076",
+    "timeout":120000,
+    "enableLog":true
+}

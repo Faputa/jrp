@@ -1,0 +1,14 @@
+{
+	"tunnelList":[
+		{
+			"remotePort":9833,
+			"localHost":"127.0.0.1",
+			"localPort":3389
+		}
+	],
+	"serverHost":"127.0.0.1",
+	"serverPort":1688,
+	"authToken":"Dtck5ZLbcqHd9Vz9Q6qViR8uNowngPZJ",
+	"enableLog":true,
+	"pingTime":60000
+}

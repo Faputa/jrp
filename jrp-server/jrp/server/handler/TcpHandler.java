@@ -10,7 +10,8 @@ import java.util.concurrent.TimeUnit;
 import jrp.log.Logger;
 import jrp.server.Context;
 import jrp.server.Message;
-import jrp.server.model.OuterLink;
+import jrp.server.model.ClientInfo;
+import jrp.server.model.Request;
 import jrp.server.model.TunnelInfo;
 import jrp.socket.SocketHelper;
 
@@ -18,50 +19,46 @@ public class TcpHandler implements Runnable
 {
 	private Socket socket;
 	private Context context;
-	private Logger log;
+	private Logger log = Logger.getLogger();
 
 	public TcpHandler(Socket socket, Context context)
 	{
 		this.socket = socket;
 		this.context = context;
-		this.log = context.log;
 	}
 
 	@Override
 	public void run()
 	{
-		log.log("收到外部请求");
-		try(Socket socket = this.socket)
+		log.info("收到外部请求");
+		try (Socket socket = this.socket)
 		{
 			int remotePort = socket.getLocalPort();
 			TunnelInfo tunnel = context.getTunnelInfo(remotePort);
-			if(tunnel != null)
+			if(tunnel == null)
 			{
-				OuterLink outerLink = new OuterLink();
-				outerLink.setRemotePort(remotePort);
-				outerLink.setOuterSocket(socket);
-				outerLink.setControlSocket(tunnel.getControlSocket());
-				try
-				{
-					// 捕获可能因网络断开而产生的异常
-					SocketHelper.sendpack(tunnel.getControlSocket(), Message.ReqProxy());
-				}
-				catch(IOException e)
-				{
-					tunnel.getControlSocket().close();
-					return;
-				}
-				context.offerOuterLink(tunnel.getClientId(), outerLink);
-				try(Socket proxySocket = outerLink.pollProxySocket(60, TimeUnit.SECONDS))// 最多等待60秒
-				{
-					if(proxySocket != null)
-					{
-						SocketHelper.forward(socket, proxySocket);
-					}
-				}
-				catch(Exception e)
-				{
-				}
+				return;
+			}
+			ClientInfo client = context.getClientInfo(tunnel.getClientId());
+			Request request = new Request();
+			request.setRemotePort(remotePort);
+			request.setOuterSocket(socket);
+			try
+			{
+				SocketHelper.sendpack(client.getControlSocket(), Message.ReqProxy());
+			}
+			catch(IOException e)
+			{
+				return;
+			}
+			client.getRequestQueue().put(request);
+			try (Socket proxySocket = request.getProxySocket(60, TimeUnit.SECONDS))
+			{// 最多等待60秒
+				SocketHelper.forward(socket, proxySocket);
+			}
+			catch(Exception e)
+			{
+				// ignore
 			}
 		}
 		catch(Exception e)
