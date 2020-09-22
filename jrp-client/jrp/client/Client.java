@@ -71,7 +71,7 @@ public class Client
 					SocketHelper.sendpack(socket, Message.Ping());
 				} catch (Exception e) {
 					log.err(e.toString());
-					try {socket.close();} catch(Exception _) {}
+					try {socket.close();} catch(Exception ee) {}
 					try {socket = newControlConnect();} catch(Exception ee) {log.err(ee.toString());}
 				}
 			}
